@@ -12,10 +12,12 @@ import Dashboard from './components/Dashboard';
 import SimpleLogin from './components/SimpleLogin';
 import SimpleRegister from './components/SimpleRegister';
 import FixedAdminLogin from './components/FixedAdminLogin';
+import WorkingAdminLogin from './components/WorkingAdminLogin';
 import EnhancedDashboard from './components/EnhancedDashboard';
 import MovieList from './components/MovieList';
 import Booking from './components/Booking';
 import Analytics from './components/Analytics';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -28,8 +30,9 @@ function App() {
             <Route path="/" element={<MovieList />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-login" element={<WorkingAdminLogin />} />
             <Route path="/simple-admin-login" element={<FixedAdminLogin />} />
+            <Route path="/working-admin-login" element={<WorkingAdminLogin />} />
             <Route path="/simple-login" element={<SimpleLogin />} />
             <Route path="/simple-register" element={<SimpleRegister />} />
             <Route path="/movies" element={<MovieList />} />
@@ -57,6 +60,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Analytics />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } 
             />

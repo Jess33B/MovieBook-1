@@ -65,6 +65,17 @@ const movies = [
     price: 290,
     posterUrl: "https://th.bing.com/th/id/R.145ae37d2c20c3a1091349b447180b52?rik=IXPQAg5a7RKG6Q&riu=http%3a%2f%2fonlookersmedia.in%2fwp-content%2fuploads%2f2018%2f11%2fjoseph-malayalam-movie-poster-stills-images-2.jpg&ehk=T4yMhhbNIofhMccSk6QP3SD173qxpytb9B9jzo%2bsBr8%3d&risl=&pid=ImgRaw&r=0=joseph",
     isActive: true
+  },
+  {
+    movieId: 6,
+    title: "M.S. Dhoni: The Untold Story",
+    description: "M.S. Dhoni: The Untold Story is a 2016 Indian Hindi-language biographical sports drama film directed and co-written by Neeraj Pandey. It is based on the life of former Test, ODI and T20I captain of the Indian national cricket team, Mahendra Singh Dhoni, who is played by Sushant Singh Rajput.",
+    genre: "Biography",
+    durationMinutes: 184,
+    rating: 7.8,
+    price: 350,
+    posterUrl: "https://tse4.mm.bing.net/th/id/OIP.msisfSHJ1H4SKFAvV0EnEgHaKs?rs=1&pid=ImgDetMain&o=7&rm=3",
+    isActive: true
   }
 ];
 
@@ -253,6 +264,53 @@ let userBookings = [
   }
 ];
 
+// Mock bookmarks
+let userBookmarks = [
+  {
+    id: 1,
+    userId: 1,
+    movieId: 1,
+    movieTitle: "The Matrix",
+    posterUrl: "https://image.tmdb.org/t/p/original/ulf1aY9LXciRX2IpnJksCDJOWvp.jpg",
+    genre: "Sci-Fi",
+    rating: 8.7,
+    price: 250
+  },
+  {
+    id: 2,
+    userId: 1,
+    movieId: 3,
+    movieTitle: "The Dark Knight",
+    posterUrl: "https://tse2.mm.bing.net/th/id/OIP.pzHzXKTcOWnvKPz1Tfyp0QHaLH",
+    genre: "Action",
+    rating: 9.0,
+    price: 300
+  }
+];
+
+// Mock wallets
+let userWallets = [
+  {
+    userId: 1,
+    balance: 1500
+  }
+];
+
+// Mock payment methods
+let paymentMethods = [
+  {
+    id: 1,
+    userId: 1,
+    type: "card",
+    cardNumber: "1234567890123456",
+    expiryDate: "12/25",
+    cvv: "123",
+    holderName: "John Doe"
+  }
+];
+
+let paymentMethodIdCounter = 2;
+
 // Reviews endpoints
 app.get('/api/reviews/movie/:movieId', (req, res) => {
   const movieReviews = reviews.filter(r => r.movieId == req.params.movieId);
@@ -284,6 +342,106 @@ app.post('/api/bookings', (req, res) => {
   };
   userBookings.push(newBooking);
   res.json(newBooking);
+});
+
+// Bookmarks endpoints
+app.get('/api/bookmarks/user/:userId', (req, res) => {
+  const userBookmarkList = userBookmarks.filter(b => b.userId == req.params.userId);
+  res.json(userBookmarkList);
+});
+
+app.post('/api/bookmarks', (req, res) => {
+  const newBookmark = {
+    id: userBookmarks.length + 1,
+    ...req.body
+  };
+  userBookmarks.push(newBookmark);
+  res.json(newBookmark);
+});
+
+app.delete('/api/bookmarks/:id', (req, res) => {
+  const index = userBookmarks.findIndex(b => b.id == req.params.id);
+  if (index !== -1) {
+    userBookmarks.splice(index, 1);
+    res.json({ message: 'Bookmark removed successfully' });
+  } else {
+    res.status(404).json({ message: 'Bookmark not found' });
+  }
+});
+
+// Wallet endpoints
+app.get('/api/wallet/user/:userId', (req, res) => {
+  const wallet = userWallets.find(w => w.userId == req.params.userId);
+  if (!wallet) {
+    // Create wallet if it doesn't exist
+    const newWallet = {
+      userId: parseInt(req.params.userId),
+      balance: 0
+    };
+    userWallets.push(newWallet);
+    res.json(newWallet);
+  } else {
+    res.json(wallet);
+  }
+});
+
+app.post('/api/wallet/add-money', (req, res) => {
+  const { userId, amount } = req.body;
+  const wallet = userWallets.find(w => w.userId == userId);
+  
+  if (!wallet) {
+    // Create wallet if it doesn't exist
+    const newWallet = {
+      userId: userId,
+      balance: amount
+    };
+    userWallets.push(newWallet);
+    res.json(newWallet);
+  } else {
+    wallet.balance += amount;
+    res.json(wallet);
+  }
+});
+
+app.post('/api/wallet/deduct', (req, res) => {
+  const { userId, amount } = req.body;
+  const wallet = userWallets.find(w => w.userId == userId);
+  
+  if (!wallet) {
+    return res.status(404).json({ message: 'Wallet not found' });
+  }
+  
+  if (wallet.balance < amount) {
+    return res.status(400).json({ message: 'Insufficient balance' });
+  }
+  
+  wallet.balance -= amount;
+  res.json(wallet);
+});
+
+// Payment methods endpoints
+app.get('/api/payment-methods/user/:userId', (req, res) => {
+  const userPaymentMethods = paymentMethods.filter(p => p.userId == req.params.userId);
+  res.json(userPaymentMethods);
+});
+
+app.post('/api/payment-methods/add', (req, res) => {
+  const newPaymentMethod = {
+    id: paymentMethodIdCounter++,
+    ...req.body
+  };
+  paymentMethods.push(newPaymentMethod);
+  res.json(newPaymentMethod);
+});
+
+app.delete('/api/payment-methods/:id', (req, res) => {
+  const index = paymentMethods.findIndex(p => p.id == req.params.id);
+  if (index !== -1) {
+    paymentMethods.splice(index, 1);
+    res.json({ message: 'Payment method removed successfully' });
+  } else {
+    res.status(404).json({ message: 'Payment method not found' });
+  }
 });
 
 // Admin endpoints

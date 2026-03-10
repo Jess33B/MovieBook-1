@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import authService from '../services/authService';
+import simpleAuthService from '../services/simpleAuthService';
 
 const AuthContext = createContext();
 
@@ -18,18 +18,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const currentUser = authService.getCurrentUser();
+        const currentUser = simpleAuthService.getCurrentUser();
         if (currentUser) {
-          const isValid = await authService.validateToken();
+          const isValid = await simpleAuthService.validateToken();
           if (isValid) {
             setUser(currentUser);
           } else {
-            authService.logout();
+            simpleAuthService.logout();
           }
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        authService.logout();
+        simpleAuthService.logout();
       } finally {
         setLoading(false);
       }
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (usernameOrEmail, password) => {
     try {
-      const userData = await authService.login(usernameOrEmail, password);
+      const userData = await simpleAuthService.login(usernameOrEmail, password);
       setUser(userData);
       return userData;
     } catch (error) {
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, fullName, phoneNumber) => {
     try {
-      const userData = await authService.register(username, email, password, fullName, phoneNumber);
+      const userData = await simpleAuthService.register(username, email, password, fullName, phoneNumber);
       setUser(userData);
       return userData;
     } catch (error) {
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    authService.logout();
+    simpleAuthService.logout();
     setUser(null);
   };
 

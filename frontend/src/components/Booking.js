@@ -99,7 +99,7 @@ const Booking = () => {
     return total;
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (selectedSeats.length === 0) {
       alert(language === 'EN' ? 'Please select seats' : 'कृपया सीटें चुनें');
       return;
@@ -107,16 +107,29 @@ const Booking = () => {
 
     const bookingData = {
       movieId: movie.movieId,
-      seats: selectedSeats,
+      movieTitle: movie.title,
+      theater: selectedTheater,
       showTime,
-      food,
-      parking,
-      total: calculateTotal()
+      seats: selectedSeats,
+      date: new Date().toISOString().split('T')[0],
+      total: calculateTotal(),
+      posterUrl: movie.posterUrl,
+      status: 'confirmed'
     };
 
-    console.log('Booking data:', bookingData);
-    alert(language === 'EN' ? 'Booking confirmed!' : 'बुकिंग की पुष्टि!');
-    navigate('/dashboard');
+    console.log('Sending booking data:', bookingData);
+
+    try {
+      // Send booking to backend
+      const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
+      console.log('Booking response:', response.data);
+      
+      alert(language === 'EN' ? 'Booking confirmed!' : 'बुकिंग की पुष्टि!');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert(language === 'EN' ? 'Booking failed. Please try again.' : 'बुकिंग विफ्ल। कृपया फिर से कोशिश करें।');
+    }
   };
 
   const foodOptions = [

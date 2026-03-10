@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import simpleAuthService from '../services/simpleAuthService';
+import { useAuth } from '../context/AuthContext';
 
 const SimpleRegister = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ const SimpleRegister = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -46,7 +47,7 @@ const SimpleRegister = () => {
     setLoading(true);
 
     try {
-      await simpleAuthService.register(
+      await register(
         formData.username, 
         formData.email, 
         formData.password, 

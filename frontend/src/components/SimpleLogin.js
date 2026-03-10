@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import simpleAuthService from '../services/simpleAuthService';
+import { useAuth } from '../context/AuthContext';
 
 const SimpleLogin = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +11,7 @@ const SimpleLogin = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -25,8 +26,14 @@ const SimpleLogin = () => {
     setLoading(true);
 
     try {
-      await simpleAuthService.login(formData.username, formData.password);
-      navigate('/dashboard');
+      const userData = await login(formData.username, formData.password);
+      
+      // Check if user is admin and redirect accordingly
+      if (userData.role === 'ADMIN') {
+        navigate('/analytics');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       setError(error.message || 'Login failed. Please try again.');
     } finally {

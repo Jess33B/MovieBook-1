@@ -28,6 +28,14 @@ const Navbar = () => {
               <Link to="/dashboard" className="nav-link">
                 Dashboard
               </Link>
+              <Link to="/profile" className="nav-link">
+                Profile
+              </Link>
+              {user.role === 'ADMIN' && (
+                <Link to="/analytics" className="nav-link">
+                  Analytics
+                </Link>
+              )}
               <button 
                 onClick={handleLogout}
                 className="btn btn-outline"
