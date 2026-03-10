@@ -156,10 +156,4 @@ movie-booking-system/
 4. Test thoroughly
 5. Submit a pull request
 
-## License
 
-This project is licensed under MIT License.
-
----
-
-Ready for production deployment and user enjoyment!
