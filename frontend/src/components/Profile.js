@@ -391,7 +391,7 @@ const Profile = () => {
                     type="text"
                     value={newPaymentMethod.holderName}
                     onChange={(e) => setNewPaymentMethod({...newPaymentMethod, holderName: e.target.value})}
-                    placeholder="John Doe"
+                    placeholder={user?.fullName || user?.username || "Your Name"}
                   />
                 </div>
               </div>

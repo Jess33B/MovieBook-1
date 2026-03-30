@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const Booking = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [movie, setMovie] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [showTime, setShowTime] = useState('');
@@ -12,9 +14,8 @@ const Booking = () => {
   const [parking, setParking] = useState(false);
   const [food, setFood] = useState([]);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const [userLocation, setUserLocation] = useState('');
-  const [nearbyTheaters, setNearbyTheaters] = useState([]);
   const [selectedTheater, setSelectedTheater] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
 
   useEffect(() => {
     fetchMovie();
@@ -29,19 +30,20 @@ const Booking = () => {
     }
   };
 
-  const theaters = [
-    { id: 1, name: 'PVR Cinemas - Phoenix Marketcity', distance: '2.3 km' },
-    { id: 2, name: 'INOX - City Pride', distance: '3.1 km' },
-    { id: 3, name: 'Cinepolis - Seasons Mall', distance: '4.5 km' },
-    { id: 4, name: 'PVR - Koregaon Park', distance: '5.2 km' },
-    { id: 5, name: 'INOX - Amanora', distance: '6.8 km' }
+  const locations = [
+    { id: 'chennai', name: 'Chennai', nameLocal: 'சென்னை' },
+    { id: 'mumbai', name: 'Mumbai', nameLocal: 'मुंबई' },
+    { id: 'bangalore', name: 'Bangalore', nameLocal: 'ಬೆಂಗಳೂರು' }
   ];
 
-  const handleLocationSubmit = () => {
-    if (userLocation.trim()) {
-      setNearbyTheaters(theaters);
-    }
-  };
+  const theaters = [
+    { id: 1, name: 'PVR Cinemas - Phoenix Marketcity', distance: '2.3 km', location: 'chennai' },
+    { id: 2, name: 'INOX - City Pride', distance: '3.1 km', location: 'mumbai' },
+    { id: 3, name: 'Cinepolis - Seasons Mall', distance: '4.5 km', location: 'bangalore' },
+    { id: 4, name: 'PVR - Koregaon Park', distance: '5.2 km', location: 'mumbai' },
+    { id: 5, name: 'INOX - Amanora', distance: '6.8 km', location: 'bangalore' }
+  ];
+
 
   const theaterLayouts = {
     1: { rows: 8, seatsPerRow: [8, 10, 12, 12, 12, 10, 8, 6] },
@@ -51,7 +53,21 @@ const Booking = () => {
     5: { rows: 8, seatsPerRow: [8, 10, 12, 12, 12, 10, 8, 6] }
   };
 
-  const currentLayout = selectedTheater ? theaterLayouts[selectedTheater] : theaterLayouts[1];
+  const currentLayout = theaterLayouts[1]; // Default layout
+
+  const handleTheaterClick = (theater) => {
+    navigate(`/theater/${theater.id}`, { 
+      state: { 
+        theater, 
+        movie, 
+        movieId 
+      } 
+    });
+  };
+
+  const filteredTheaters = selectedLocation 
+    ? theaters.filter(theater => theater.location === selectedLocation)
+    : theaters;
 
   const generateSeats = () => {
     const seats = [];
@@ -106,6 +122,7 @@ const Booking = () => {
     }
 
     const bookingData = {
+      userId: user?.id || 1,
       movieId: movie.movieId,
       movieTitle: movie.title,
       theater: selectedTheater,
@@ -114,7 +131,8 @@ const Booking = () => {
       date: new Date().toISOString().split('T')[0],
       total: calculateTotal(),
       posterUrl: movie.posterUrl,
-      status: 'confirmed'
+      status: 'confirmed',
+      userName: user?.fullName || user?.username || 'User'
     };
 
     console.log('Sending booking data:', bookingData);
@@ -169,43 +187,37 @@ const Booking = () => {
         </div>
       </div>
 
-      {!selectedTheater && (
-        <div className="location-section">
-          <h2>{language === 'EN' ? 'Select Your Location' : 'अपना स्थान चुनें'}</h2>
-          <div className="location-input-group">
-            <input
-              type="text"
-              placeholder={language === 'EN' ? 'Enter your location...' : 'अपना स्थान दर्ज करें...'}
-              value={userLocation}
-              onChange={(e) => setUserLocation(e.target.value)}
-              className="location-input"
-            />
-            <button onClick={handleLocationSubmit} className="location-btn">
-              {language === 'EN' ? 'Find Theaters' : 'थिएटर खोजें'}
+      <div className="location-section">
+        <h2>{language === 'EN' ? 'Select Location' : 'स्थान चुनें'}</h2>
+        <div className="location-buttons">
+          {locations.map(location => (
+            <button
+              key={location.id}
+              onClick={() => setSelectedLocation(location.id)}
+              className={`location-btn ${selectedLocation === location.id ? 'active' : ''}`}
+            >
+              {language === 'EN' ? location.name : location.nameLocal}
             </button>
-          </div>
-          
-          {nearbyTheaters.length > 0 && (
-            <div className="theaters-list">
-              <h3>{language === 'EN' ? 'Nearby Theaters' : 'नजदीकी थिएटर'}</h3>
-              {nearbyTheaters.map(theater => (
-                <div key={theater.id} className="theater-card">
-                  <div className="theater-info">
-                    <h4>{theater.name}</h4>
-                    <span className="distance">{theater.distance}</span>
-                  </div>
-                  <button 
-                    onClick={() => setSelectedTheater(theater.id)}
-                    className="select-theater-btn"
-                  >
-                    {language === 'EN' ? 'Select' : 'चुनें'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          ))}
         </div>
-      )}
+      </div>
+
+      <div className="theater-selection">
+        <h2>{language === 'EN' ? 'Select Theater' : 'थिएटर चुनें'}</h2>
+        <div className="theaters-list">
+          {filteredTheaters.map(theater => (
+            <div key={theater.id} className="theater-card" onClick={() => handleTheaterClick(theater)}>
+              <div className="theater-info">
+                <h4>{theater.name}</h4>
+                <span className="distance">{theater.distance}</span>
+              </div>
+              <button className="select-theater-btn">
+                {language === 'EN' ? 'View Details' : 'विवरण देखें'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {selectedTheater && (
         <>
@@ -338,7 +350,7 @@ const Booking = () => {
             </div>
             <div className="summary-item">
               <span>{language === 'EN' ? 'Theater' : 'थिएटर'}:</span>
-              <span>{nearbyTheaters.find(t => t.id === parseInt(selectedTheater))?.name}</span>
+              <span>{theaters.find(t => t.id === parseInt(selectedTheater))?.name}</span>
             </div>
             <div className="summary-item">
               <span>{language === 'EN' ? 'Show Time' : 'शो समय'}:</span>

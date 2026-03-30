@@ -14,13 +14,21 @@ const movies = [
   {
     movieId: 1,
     title: "The Matrix",
-    description: "A computer hacker learns about the true nature of his reality and his role in the war against its controllers.",
+    description: "A computer hacker discovers that reality as he knows it is a simulation and joins a rebellion against its controllers.",
     genre: "Sci-Fi",
     durationMinutes: 136,
     rating: 8.7,
     price: 250,
     posterUrl: "https://image.tmdb.org/t/p/original/ulf1aY9LXciRX2IpnJksCDJOWvp.jpg",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/vKQi3bBA1y8",
+    cast: [
+      { name: "Keanu Reeves", role: "Neo" },
+      { name: "Laurence Fishburne", role: "Morpheus" },
+      { name: "Carrie-Anne Moss", role: "Trinity" }
+    ],
+    director: "Lana Wachowski, Lilly Wachowski",
+    story: "A computer hacker discovers that reality as he knows it is a simulation and joins a rebellion against its controllers."
   },
   {
     movieId: 2,
@@ -31,51 +39,90 @@ const movies = [
     rating: 8.8,
     price: 280,
     posterUrl: "https://image.tmdb.org/t/p/original/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/YoHD9XEInc0",
+    cast: [
+      { name: "Leonardo DiCaprio", role: "Dom Cobb" },
+      { name: "Joseph Gordon-Levitt", role: "Arthur" },
+      { name: "Ellen Page", role: "Ariadne" }
+    ],
+    director: "Christopher Nolan",
+    story: "A skilled thief enters people's dreams to steal secrets but is tasked with planting an idea instead."
   },
   {
     movieId: 3,
     title: "The Dark Knight",
-    description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham Batman must accept one of the greatest psychological and physical tests.",
+    description: "When the Joker unleashes chaos on Gotham, Batman faces one of the toughest psychological and moral challenges of his life.",
     genre: "Action",
     durationMinutes: 152,
     rating: 9.0,
     price: 300,
     posterUrl: "https://tse2.mm.bing.net/th/id/OIP.pzHzXKTcOWnvKPz1Tfyp0QHaLH",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/EXeTwQWrcwY",
+    cast: [
+      { name: "Christian Bale", role: "Bruce Wayne/Batman" },
+      { name: "Heath Ledger", role: "Joker" },
+      { name: "Aaron Eckhart", role: "Harvey Dent" }
+    ],
+    director: "Christopher Nolan",
+    story: "When the Joker unleashes chaos on Gotham, Batman faces one of the toughest psychological and moral challenges of his life."
   },
   {
     movieId: 4,
     title: "Kumbalangi Nights",
-    description: "A gripping tale of a police officer who investigates a series of mysterious deaths in a small village, uncovering dark secrets and confronting supernatural forces.",
+    description: "A heartfelt story of four brothers navigating love, relationships, and personal struggles in a coastal village.",
     genre: "Drama",
-    durationMinutes: 146,
+    durationMinutes: 135,
     rating: 8.5,
     price: 320,
     posterUrl: "https://tse3.mm.bing.net/th/id/OIP.mi-kaW1gpQDDT_iZsE30xQHaK_?w=1290&h=1915&rs=1&pid=ImgDetMain&o=7&rm=3",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/3P4BFBSafF0",
+    cast: [
+      { name: "Shane Nigam", role: "Saji" },
+      { name: "Soubin Shahir", role: "Bobby" },
+      { name: "Fahadh Faasil", role: "Shammi" }
+    ],
+    director: "Madhu C. Narayanan",
+    story: "A heartfelt story of four brothers navigating love, relationships, and personal struggles in a coastal village."
   },
   {
     movieId: 5,
     title: "Joseph",
-    description: "A powerful story about family bonds, traditions, and the challenges faced by a man trying to balance his cultural heritage with modern life.",
-    genre: "Drama",
+    description: "A retired police officer investigates a case that becomes deeply personal, uncovering emotional and dark truths.",
+    genre: "Drama / Thriller",
     durationMinutes: 138,
     rating: 8.2,
     price: 290,
     posterUrl: "https://th.bing.com/th/id/R.145ae37d2c20c3a1091349b447180b52?rik=IXPQAg5a7RKG6Q&riu=http%3a%2f%2fonlookersmedia.in%2fwp-content%2fuploads%2f2018%2f11%2fjoseph-malayalam-movie-poster-stills-images-2.jpg&ehk=T4yMhhbNIofhMccSk6QP3SD173qxpytb9B9jzo%2bsBr8%3d&risl=&pid=ImgRaw&r=0=joseph",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/R2gZ1GqXyWk",
+    cast: [
+      { name: "Joju George", role: "Joseph" },
+      { name: "Athmeeya Rajan", role: "Stella" }
+    ],
+    director: "M. Padmakumar",
+    story: "A retired police officer investigates a case that becomes deeply personal, uncovering emotional and dark truths."
   },
   {
     movieId: 6,
     title: "M.S. Dhoni: The Untold Story",
-    description: "M.S. Dhoni: The Untold Story is a 2016 Indian Hindi-language biographical sports drama film directed and co-written by Neeraj Pandey. It is based on the life of former Test, ODI and T20I captain of the Indian national cricket team, Mahendra Singh Dhoni, who is played by Sushant Singh Rajput.",
-    genre: "Biography",
+    description: "The inspiring journey of cricketer Mahendra Singh Dhoni from a small-town boy to India's most successful captain.",
+    genre: "Biography / Sports",
     durationMinutes: 184,
-    rating: 7.8,
-    price: 350,
+    rating: 7.9,
+    price: 270,
     posterUrl: "https://tse4.mm.bing.net/th/id/OIP.msisfSHJ1H4SKFAvV0EnEgHaKs?rs=1&pid=ImgDetMain&o=7&rm=3",
-    isActive: true
+    isActive: true,
+    trailer: "https://www.youtube.com/embed/6L6XqWoS8tw",
+    cast: [
+      { name: "Sushant Singh Rajput", role: "MS Dhoni" },
+      { name: "Kiara Advani", role: "Sakshi" },
+      { name: "Disha Patani", role: "Priyanka" }
+    ],
+    director: "Neeraj Pandey",
+    story: "The inspiring journey of Mahendra Singh Dhoni from a small-town boy to India's most successful captain."
   }
 ];
 
@@ -180,36 +227,42 @@ app.get('/api/movies/:id', (req, res) => {
 
 // Mock reviews with sentiment data
 let reviews = [
+  // The Matrix Reviews
   {
     id: 1,
     movieId: 1,
     userId: 1,
     rating: 5,
-    comment: "The movie was absolutely amazing! Great action sequences and mind-blowing plot.",
+    comment: "The Matrix is absolutely mind-blowing! The action sequences and philosophical themes are incredible.",
     sentiment: "positive",
     sentimentScore: 0.9,
-    date: "2024-01-15"
+    date: "2024-01-15",
+    user: "JohnDoe"
   },
   {
     id: 2,
     movieId: 1,
     userId: 2,
     rating: 4,
-    comment: "Good movie but the seats were uncomfortable in the theater.",
+    comment: "Great movie but the seats were uncomfortable in the theater.",
     sentiment: "mixed",
     sentimentScore: 0.3,
-    date: "2024-01-16"
+    date: "2024-01-16",
+    user: "JaneSmith"
   },
   {
     id: 3,
-    movieId: 2,
+    movieId: 1,
     userId: 3,
-    rating: 2,
-    comment: "The movie was boring and too long. Disappointed with the storyline.",
-    sentiment: "negative",
-    sentimentScore: -0.7,
-    date: "2024-01-17"
+    rating: 5,
+    comment: "Keanu Reeves at his best! The visual effects were groundbreaking for 1999.",
+    sentiment: "positive",
+    sentimentScore: 0.95,
+    date: "2024-01-17",
+    user: "MovieBuff"
   },
+  
+  // Inception Reviews
   {
     id: 4,
     movieId: 2,
@@ -218,51 +271,134 @@ let reviews = [
     comment: "Inception is a masterpiece! Christopher Nolan at his best.",
     sentiment: "positive",
     sentimentScore: 0.95,
-    date: "2024-01-18"
+    date: "2024-01-18",
+    user: "FilmCritic"
   },
   {
     id: 5,
-    movieId: 3,
+    movieId: 2,
     userId: 5,
+    rating: 3,
+    comment: "The movie was too complex and hard to follow.",
+    sentiment: "negative",
+    sentimentScore: -0.4,
+    date: "2024-01-19",
+    user: "CasualViewer"
+  },
+  {
+    id: 6,
+    movieId: 2,
+    userId: 6,
+    rating: 4,
+    comment: "Amazing concept and execution. Leo was brilliant as always.",
+    sentiment: "positive",
+    sentimentScore: 0.8,
+    date: "2024-01-20",
+    user: "LeoFan"
+  },
+  
+  // The Dark Knight Reviews
+  {
+    id: 7,
+    movieId: 3,
+    userId: 7,
+    rating: 5,
+    comment: "Heath Ledger's Joker is legendary! Best superhero movie ever.",
+    sentiment: "positive",
+    sentimentScore: 0.98,
+    date: "2024-01-21",
+    user: "BatmanFan"
+  },
+  {
+    id: 8,
+    movieId: 3,
+    userId: 8,
     rating: 4,
     comment: "Dark Knight delivers intense action and emotional depth.",
     sentiment: "positive",
     sentimentScore: 0.8,
-    date: "2024-01-19"
+    date: "2024-01-22",
+    user: "ActionLover"
+  },
+  
+  // Kumbalangi Nights Reviews
+  {
+    id: 9,
+    movieId: 4,
+    userId: 9,
+    rating: 5,
+    comment: "Beautiful Malayalam cinema! Fahadh Faasil's performance was outstanding.",
+    sentiment: "positive",
+    sentimentScore: 0.9,
+    date: "2024-01-23",
+    user: "MalayalamCinema"
+  },
+  {
+    id: 10,
+    movieId: 4,
+    userId: 10,
+    rating: 4,
+    comment: "Heartwarming story about family bonds and relationships.",
+    sentiment: "positive",
+    sentimentScore: 0.7,
+    date: "2024-01-24",
+    user: "FamilyDrama"
+  },
+  
+  // Joseph Reviews
+  {
+    id: 11,
+    movieId: 5,
+    userId: 11,
+    rating: 4,
+    comment: "Joju George delivers a powerful performance. Gripping storyline.",
+    sentiment: "positive",
+    sentimentScore: 0.8,
+    date: "2024-01-25",
+    user: "ThrillerFan"
+  },
+  {
+    id: 12,
+    movieId: 5,
+    userId: 12,
+    rating: 3,
+    comment: "Good mystery but pacing was a bit slow in parts.",
+    sentiment: "mixed",
+    sentimentScore: 0.1,
+    date: "2024-01-26",
+    user: "MysteryLover"
+  },
+  
+  // MS Dhoni Reviews
+  {
+    id: 13,
+    movieId: 6,
+    userId: 13,
+    rating: 4,
+    comment: "Sushant Singh Rajput was perfect as Dhoni! Emotional journey.",
+    sentiment: "positive",
+    sentimentScore: 0.8,
+    date: "2024-01-27",
+    user: "CricketFan"
+  },
+  {
+    id: 14,
+    movieId: 6,
+    userId: 14,
+    rating: 3,
+    comment: "Good biopic but could have been shorter. Too much focus on romance.",
+    sentiment: "mixed",
+    sentimentScore: 0.2,
+    date: "2024-01-28",
+    user: "SportsMovie"
   }
 ];
 
 let reviewIdCounter = 6;
 
-// Mock user bookings
-let userBookings = [
-  {
-    id: 1,
-    userId: 1,
-    movieId: 1,
-    movieTitle: "The Matrix",
-    theater: "PVR Cinemas",
-    showTime: "7:00 PM",
-    seats: ["A5", "A6"],
-    date: "2024-01-20",
-    status: "confirmed",
-    totalCost: 600,
-    posterUrl: "https://image.tmdb.org/t/p/original/ulf1aY9LXciRX2IpnJksCDJOWvp.jpg"
-  },
-  {
-    id: 2,
-    userId: 1,
-    movieId: 2,
-    movieTitle: "Inception",
-    theater: "INOX",
-    showTime: "9:30 PM",
-    seats: ["C7", "C8", "C9"],
-    date: "2024-01-25",
-    status: "pending",
-    totalCost: 900,
-    posterUrl: "https://image.tmdb.org/t/p/original/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg"
-  }
-];
+// Mock user bookings - empty by default, will be populated when users make bookings
+let bookingIdCounter = 1;
+let userBookings = [];
 
 // Mock bookmarks
 let userBookmarks = [
@@ -296,20 +432,13 @@ let userWallets = [
   }
 ];
 
-// Mock payment methods
-let paymentMethods = [
-  {
-    id: 1,
-    userId: 1,
-    type: "card",
-    cardNumber: "1234567890123456",
-    expiryDate: "12/25",
-    cvv: "123",
-    holderName: "John Doe"
-  }
-];
+// Mock shows
+let shows = [];
 
-let paymentMethodIdCounter = 2;
+// Mock payment methods - empty by default, will be populated when users add them
+let paymentMethods = [];
+
+let paymentMethodIdCounter = 1;
 
 // Reviews endpoints
 app.get('/api/reviews/movie/:movieId', (req, res) => {
@@ -335,12 +464,22 @@ app.get('/api/bookings/user/:userId', (req, res) => {
 
 app.post('/api/bookings', (req, res) => {
   const newBooking = {
-    id: userBookings.length + 1,
-    ...req.body,
+    id: bookingIdCounter++,
+    userId: req.body.userId || 1,
+    movieId: req.body.movieId,
+    movieTitle: req.body.movieTitle,
+    theater: req.body.theater,
+    showTime: req.body.showTime,
+    seats: req.body.seats,
+    date: req.body.date,
+    total: req.body.total,
+    posterUrl: req.body.posterUrl,
     status: "confirmed",
-    date: new Date().toISOString()
+    userName: req.body.userName || "User",
+    createdAt: new Date().toISOString()
   };
   userBookings.push(newBooking);
+  console.log('New booking added:', newBooking);
   res.json(newBooking);
 });
 
@@ -444,7 +583,177 @@ app.delete('/api/payment-methods/:id', (req, res) => {
   }
 });
 
-// Admin endpoints
+// Admin management endpoints
+app.get('/api/admin/shows', (req, res) => {
+  res.json(shows);
+});
+
+app.post('/api/admin/movies', (req, res) => {
+  const { title, description, genre, durationMinutes, rating, price, posterUrl, trailer, cast, director, story, isActive } = req.body;
+  
+  // Validate required fields
+  if (!title || !genre || !durationMinutes || !rating || !price) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+  
+  // Check for duplicate movie
+  const exists = movies.some(m => m.title.toLowerCase() === title.toLowerCase());
+  if (exists) {
+    return res.status(400).json({ message: 'Movie with this title already exists' });
+  }
+  
+  const newMovie = {
+    movieId: movies.length + 1,
+    title: sanitizeInput(title),
+    description: sanitizeInput(description),
+    genre: sanitizeInput(genre),
+    durationMinutes: parseInt(durationMinutes),
+    rating: parseFloat(rating),
+    price: parseFloat(price),
+    posterUrl: sanitizeInput(posterUrl),
+    trailer: sanitizeInput(trailer),
+    cast: cast || [],
+    director: sanitizeInput(director),
+    story: sanitizeInput(story),
+    isActive: isActive !== false
+  };
+  
+  movies.push(newMovie);
+  res.json(newMovie);
+});
+
+app.put('/api/admin/movies/:id', (req, res) => {
+  const movieId = parseInt(req.params.id);
+  const movieIndex = movies.findIndex(m => m.movieId === movieId);
+  
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found' });
+  }
+  
+  const { title, description, genre, durationMinutes, rating, price, posterUrl, trailer, cast, director, story, isActive } = req.body;
+  
+  movies[movieIndex] = {
+    ...movies[movieIndex],
+    title: sanitizeInput(title),
+    description: sanitizeInput(description),
+    genre: sanitizeInput(genre),
+    durationMinutes: parseInt(durationMinutes),
+    rating: parseFloat(rating),
+    price: parseFloat(price),
+    posterUrl: sanitizeInput(posterUrl),
+    trailer: sanitizeInput(trailer),
+    cast: cast ? cast.split(',').map(name => ({ name: name.trim(), role: 'Actor' })) : movies[movieIndex].cast,
+    director: sanitizeInput(director),
+    story: sanitizeInput(story),
+    isActive: isActive !== false
+  };
+  
+  res.json(movies[movieIndex]);
+});
+
+app.delete('/api/admin/movies/:id', (req, res) => {
+  const movieId = parseInt(req.params.id);
+  const movieIndex = movies.findIndex(m => m.movieId === movieId);
+  
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found' });
+  }
+  
+  // Check if movie has active bookings
+  const movieBookings = userBookings.filter(b => b.movieId === movieId && b.status === 'confirmed');
+  if (movieBookings.length > 0) {
+    return res.status(400).json({ message: 'Cannot delete movie with active bookings' });
+  }
+  
+  movies.splice(movieIndex, 1);
+  res.json({ message: 'Movie deleted successfully' });
+});
+
+app.post('/api/admin/shows', (req, res) => {
+  const { movieId, theater, screen, time, date, availableSeats } = req.body;
+  
+  // Validate required fields
+  if (!movieId || !theater || !screen || !time || !date || !availableSeats) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+  
+  const newShow = {
+    id: shows.length + 1,
+    movieId: parseInt(movieId),
+    theater: sanitizeInput(theater),
+    screen: sanitizeInput(screen),
+    time: sanitizeInput(time),
+    date: sanitizeInput(date),
+    availableSeats: parseInt(availableSeats)
+  };
+  
+  shows.push(newShow);
+  res.json(newShow);
+});
+
+app.delete('/api/admin/shows/:id', (req, res) => {
+  const showId = parseInt(req.params.id);
+  const showIndex = shows.findIndex(s => s.id === showId);
+  
+  if (showIndex === -1) {
+    return res.status(404).json({ message: 'Show not found' });
+  }
+  
+  shows.splice(showIndex, 1);
+  res.json({ message: 'Show deleted successfully' });
+});
+
+// Seat locking endpoints
+let seatLocks = [];
+
+app.get('/api/seat-locks/:movieId/:theaterId/:showTime', (req, res) => {
+  const { movieId, theaterId, showTime } = req.params;
+  const locks = seatLocks.filter(lock => 
+    lock.movieId == movieId && 
+    lock.theaterId == theaterId && 
+    lock.showTime == showTime &&
+    Date.now() < lock.expiresAt
+  );
+  res.json(locks);
+});
+
+app.post('/api/seat-locks', (req, res) => {
+  const { lockId, userId, movieId, theaterId, showTime, seats, expiresAt } = req.body;
+  
+  const newLock = {
+    lockId,
+    userId,
+    movieId,
+    theaterId,
+    showTime,
+    seats,
+    expiresAt: new Date(expiresAt).getTime()
+  };
+  
+  seatLocks.push(newLock);
+  res.json(newLock);
+});
+
+app.delete('/api/seat-locks/:lockKey/:userId', (req, res) => {
+  const { lockKey, userId } = req.params;
+  
+  seatLocks = seatLocks.filter(lock => 
+    !(lock.movieId && lock.theaterId && lock.showTime == lockKey)
+  );
+  
+  res.json({ message: 'Lock released successfully' });
+});
+
+// Input sanitization helper
+const sanitizeInput = (input) => {
+  if (typeof input !== 'string') return input;
+  
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*<\/script>|<\/script>)/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+};
 app.get('/api/admin/users', (req, res) => {
   res.json(users);
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { validateField, sanitizeInput, sanitizeSQL, isValidGmail, gmailValidation, isValidPhone, checkPasswordStrength } from '../utils/validation';
 
 const SimpleRegister = () => {
   const [formData, setFormData] = useState({
@@ -11,36 +12,72 @@ const SimpleRegister = () => {
     fullName: '',
     phoneNumber: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ strength: 'weak', score: 0, message: '' });
 
   const navigate = useNavigate();
   const { register } = useAuth();
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    const sanitizedValue = sanitizeInput(sanitizeSQL(value));
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: sanitizedValue
     });
+    
+    // Check password strength when password changes
+    if (name === 'password') {
+      setPasswordStrength(checkPasswordStrength(sanitizedValue));
+    }
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ''
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate each field
+    const usernameValidation = validateField('username', formData.username);
+    if (!usernameValidation.valid) newErrors.username = usernameValidation.message;
+    
+    // Validate email using Gmail validation
+    if (!isValidGmail(formData.email)) {
+      newErrors.email = 'Please enter a valid Gmail address (username@gmail.com)';
+    }
+    
+    const passwordValidation = validateField('password', formData.password);
+    if (!passwordValidation.valid) newErrors.password = passwordValidation.message;
+    
+    const fullNameValidation = validateField('fullName', formData.fullName);
+    if (!fullNameValidation.valid) newErrors.fullName = fullNameValidation.message;
+    
+    // Validate phone number (exactly 10 digits)
+    if (formData.phoneNumber && !isValidPhone(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Please enter exactly 10 digits for phone number';
+    }
+    
+    // Password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
-
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters long');
+    
+    if (!validateForm()) {
       return;
     }
 
@@ -48,15 +85,15 @@ const SimpleRegister = () => {
 
     try {
       await register(
-        formData.username, 
-        formData.email, 
-        formData.password, 
-        formData.fullName, 
-        formData.phoneNumber
+        sanitizeSQL(formData.username), 
+        sanitizeSQL(formData.email), 
+        sanitizeSQL(formData.password), 
+        sanitizeSQL(formData.fullName), 
+        sanitizeSQL(formData.phoneNumber)
       );
       navigate('/dashboard');
     } catch (error) {
-      setError(error.message || 'Registration failed. Please try again.');
+      setErrors({ general: error.message || 'Registration failed. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -84,7 +121,7 @@ const SimpleRegister = () => {
           Please fill this form to create an account.
         </p>
         
-        {error && (
+        {errors.general && (
           <div style={{
             padding: '10px',
             marginBottom: '20px',
@@ -93,7 +130,7 @@ const SimpleRegister = () => {
             border: '1px solid #f5c6cb',
             borderRadius: '4px'
           }}>
-            {error}
+            {errors.general}
           </div>
         )}
         
@@ -108,7 +145,7 @@ const SimpleRegister = () => {
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.fullName ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
@@ -116,6 +153,11 @@ const SimpleRegister = () => {
               onChange={handleChange}
               placeholder="Enter your full name"
             />
+            {errors.fullName && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.fullName}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '15px' }}>
@@ -128,7 +170,7 @@ const SimpleRegister = () => {
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.username ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
@@ -137,11 +179,16 @@ const SimpleRegister = () => {
               placeholder="Choose a username"
               required
             />
+            {errors.username && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.username}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Email
+              Email (Gmail only)
             </label>
             <input
               type="email"
@@ -149,34 +196,52 @@ const SimpleRegister = () => {
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.email ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="username@gmail.com"
             />
+            {errors.email && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.email}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Phone Number
+              Phone Number (10 digits only)
             </label>
             <input
               type="tel"
               name="phoneNumber"
+              maxLength="10"
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.phoneNumber ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
               value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
+              onChange={(e) => {
+                // Only allow digits
+                const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setFormData({
+                  ...formData,
+                  phoneNumber: digitsOnly
+                });
+              }}
+              placeholder="Enter 10-digit phone number"
             />
+            {errors.phoneNumber && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.phoneNumber}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '15px' }}>
@@ -189,7 +254,7 @@ const SimpleRegister = () => {
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.password ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
@@ -198,6 +263,52 @@ const SimpleRegister = () => {
               placeholder="Create a password"
               required
             />
+            {errors.password && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.password}
+              </div>
+            )}
+            {formData.password && (
+              <div style={{ marginTop: '8px', fontSize: '12px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  marginBottom: '4px'
+                }}>
+                  <span>Password Strength:</span>
+                  <span style={{ 
+                    fontWeight: 'bold',
+                    color: passwordStrength.strength === 'strong' ? '#28a745' : 
+                           passwordStrength.strength === 'medium' ? '#ffc107' : '#dc3545'
+                  }}>
+                    {passwordStrength.strength.toUpperCase()}
+                  </span>
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '4px',
+                  marginBottom: '4px'
+                }}>
+                  {[1, 2, 3, 4, 5].map((level) => (
+                    <div
+                      key={level}
+                      style={{
+                        flex: 1,
+                        height: '4px',
+                        backgroundColor: level <= passwordStrength.score ? 
+                          (passwordStrength.strength === 'strong' ? '#28a745' : 
+                           passwordStrength.strength === 'medium' ? '#ffc107' : '#dc3545') : '#e9ecef',
+                        borderRadius: '2px'
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ color: '#6c757d', fontSize: '11px' }}>
+                  {passwordStrength.message}
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '20px' }}>
@@ -210,7 +321,7 @@ const SimpleRegister = () => {
               style={{
                 width: '100%',
                 padding: '10px',
-                border: '1px solid #ddd',
+                border: errors.confirmPassword ? '1px solid #dc3545' : '1px solid #ddd',
                 borderRadius: '4px',
                 fontSize: '14px'
               }}
@@ -219,6 +330,11 @@ const SimpleRegister = () => {
               placeholder="Confirm your password"
               required
             />
+            {errors.confirmPassword && (
+              <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '5px' }}>
+                {errors.confirmPassword}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '20px' }}>

@@ -16,7 +16,9 @@ import WorkingAdminLogin from './components/WorkingAdminLogin';
 import EnhancedDashboard from './components/EnhancedDashboard';
 import MovieList from './components/MovieList';
 import Booking from './components/Booking';
+import TheaterDetails from './components/TheaterDetails';
 import Analytics from './components/Analytics';
+import AdminManagement from './components/AdminManagement';
 import Profile from './components/Profile';
 
 function App() {
@@ -37,6 +39,7 @@ function App() {
             <Route path="/simple-register" element={<SimpleRegister />} />
             <Route path="/movies" element={<MovieList />} />
             <Route path="/booking/:movieId" element={<Booking />} />
+            <Route path="/theater/:theaterId" element={<TheaterDetails />} />
             
             {/* Protected Routes */}
             <Route 
@@ -56,10 +59,10 @@ function App() {
               } 
             />
             <Route 
-              path="/analytics" 
+              path="/admin-management" 
               element={
                 <ProtectedRoute>
-                  <Analytics />
+                  <AdminManagement />
                 </ProtectedRoute>
               } 
             />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { validateField, sanitizeInput, sanitizeSQL, isValidGmail, gmailValidation, isValidPhone } from '../utils/validation';
 
 const EnhancedDashboard = () => {
   const { user, logout } = useAuth();
@@ -28,9 +29,24 @@ const EnhancedDashboard = () => {
     }
   }, [user]);
 
+  // Refresh bookings when component gains focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        fetchUserBookings();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user]);
+
   const fetchUserBookings = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/bookings/user/${user.id}`);
+      const userId = user?.id || 1;
+      console.log('Fetching bookings for user:', userId);
+      const response = await axios.get(`http://localhost:8080/api/bookings/user/${userId}`);
+      console.log('Bookings received:', response.data);
       setBookings(response.data);
       setLoading(false);
     } catch (error) {
@@ -47,8 +63,41 @@ const EnhancedDashboard = () => {
   };
 
   const handleSaveProfile = async () => {
+    const newErrors = {};
+    
+    // Validate full name using centralized validation
+    const fullNameValidation = validateField('fullName', profileData.fullName);
+    if (!fullNameValidation.valid) {
+      newErrors.fullName = fullNameValidation.message;
+    }
+
+    // Validate email using Gmail validation
+    if (!isValidGmail(profileData.email)) {
+      newErrors.email = 'Please enter a valid Gmail address (username@gmail.com)';
+    }
+
+    // Validate phone number (exactly 10 digits)
+    if (profileData.phoneNumber && !isValidPhone(profileData.phoneNumber)) {
+      newErrors.phoneNumber = 'Please enter exactly 10 digits for phone number';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      // Show validation errors
+      const errorMessages = Object.values(newErrors).join('\n');
+      alert(`Please fix the following errors:\n${errorMessages}`);
+      return;
+    }
+
     setSaving(true);
     try {
+      // Sanitize all inputs before sending to backend
+      const sanitizedData = {
+        fullName: sanitizeSQL(sanitizeInput(profileData.fullName)),
+        email: sanitizeSQL(sanitizeInput(profileData.email)),
+        phoneNumber: sanitizeSQL(sanitizeInput(profileData.phoneNumber)),
+        bio: sanitizeSQL(sanitizeInput(profileData.bio))
+      };
+
       // Simulate API call to update profile
       await new Promise(resolve => setTimeout(resolve, 1000));
       alert('Profile updated successfully!');
@@ -131,7 +180,15 @@ const EnhancedDashboard = () => {
                 type="tel" 
                 name="phoneNumber"
                 value={profileData.phoneNumber}
-                onChange={handleProfileChange}
+                maxLength="10"
+                onChange={(e) => {
+                  const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setProfileData({
+                    ...profileData,
+                    phoneNumber: digitsOnly
+                  });
+                }}
+                placeholder="Enter 10-digit phone number"
               />
             </div>
             <button 
@@ -210,7 +267,7 @@ const EnhancedDashboard = () => {
                     <span>Time: {booking.showTime}</span>
                     <span>Date: {new Date(booking.date).toLocaleDateString()}</span>
                     <span>Seats: {booking.seats.join(', ')}</span>
-                    <span>Price: ₹{booking.totalCost}</span>
+                    <span>Price: ₹{booking.total}</span>
                   </div>
                   <span className={`booking-status ${getStatusColor(booking.status)}`}>
                     {booking.status}
@@ -233,12 +290,14 @@ const EnhancedDashboard = () => {
             >
               Browse Movies
             </button>
-            <button 
-              className="btn btn-secondary"
-              onClick={() => navigate('/analytics')}
-            >
-              View Analytics
-            </button>
+            {user.role === 'ADMIN' && (
+              <button 
+                className="btn btn-secondary"
+                onClick={() => navigate('/analytics')}
+              >
+                View Analytics
+              </button>
+            )}
             <button 
               className="btn btn-outline"
               onClick={handleLogout}

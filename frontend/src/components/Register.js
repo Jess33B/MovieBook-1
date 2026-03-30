@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { isValidGmail, isValidPhone, checkPasswordStrength } from '../utils/validation';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,20 +14,39 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ strength: 'weak', score: 0, message: '' });
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Check password strength when password changes
+    if (name === 'password') {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Validate Gmail
+    if (!isValidGmail(formData.email)) {
+      setError('Please enter a valid Gmail address (username@gmail.com)');
+      return;
+    }
+
+    // Validate phone number (exactly 10 digits)
+    if (formData.phoneNumber && !isValidPhone(formData.phoneNumber)) {
+      setError('Please enter exactly 10 digits for phone number');
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -100,7 +120,7 @@ const Register = () => {
 
           <div className="form-group">
             <label className="form-label" htmlFor="email">
-              Email
+              Email (Gmail only)
             </label>
             <input
               type="email"
@@ -109,14 +129,14 @@ const Register = () => {
               className="form-input"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="username@gmail.com"
               required
             />
           </div>
 
           <div className="form-group">
             <label className="form-label" htmlFor="phoneNumber">
-              Phone Number
+              Phone Number (10 digits only)
             </label>
             <input
               type="tel"
@@ -124,8 +144,15 @@ const Register = () => {
               name="phoneNumber"
               className="form-input"
               value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
+              maxLength="10"
+              onChange={(e) => {
+                const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setFormData({
+                  ...formData,
+                  phoneNumber: digitsOnly
+                });
+              }}
+              placeholder="Enter 10-digit phone number"
             />
           </div>
 
@@ -144,6 +171,47 @@ const Register = () => {
               required
               minLength="6"
             />
+            {formData.password && (
+              <div style={{ marginTop: '8px', fontSize: '12px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  marginBottom: '4px'
+                }}>
+                  <span>Password Strength:</span>
+                  <span style={{ 
+                    fontWeight: 'bold',
+                    color: passwordStrength.strength === 'strong' ? '#28a745' : 
+                           passwordStrength.strength === 'medium' ? '#ffc107' : '#dc3545'
+                  }}>
+                    {passwordStrength.strength.toUpperCase()}
+                  </span>
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '4px',
+                  marginBottom: '4px'
+                }}>
+                  {[1, 2, 3, 4, 5].map((level) => (
+                    <div
+                      key={level}
+                      style={{
+                        flex: 1,
+                        height: '4px',
+                        backgroundColor: level <= passwordStrength.score ? 
+                          (passwordStrength.strength === 'strong' ? '#28a745' : 
+                           passwordStrength.strength === 'medium' ? '#ffc107' : '#dc3545') : '#e9ecef',
+                        borderRadius: '2px'
+                      }}
+                    />
+                  ))}
+                </div>
+                <div style={{ color: '#6c757d', fontSize: '11px' }}>
+                  {passwordStrength.message}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="form-group">
